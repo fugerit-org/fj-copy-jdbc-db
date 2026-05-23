@@ -1,0 +1,5 @@
+CREATE TABLE  TEST_TABLE (
+    id INT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    age INT NOT NULL
+);
