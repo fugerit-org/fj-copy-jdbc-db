@@ -14,13 +14,13 @@ import java.sql.Statement;
 import java.sql.Timestamp;
 import static org.junit.jupiter.api.Assertions.*;
 
-public class CopyJDBCTest {
+class CopyJDBCTest {
 
     private Connection srcConn;
     private Connection destConn;
 
     @BeforeEach
-    public void setup() throws SQLException {
+    void setup() throws SQLException {
         srcConn = DriverManager.getConnection("jdbc:h2:mem:src_db;DB_CLOSE_DELAY=-1");
         destConn = DriverManager.getConnection("jdbc:h2:mem:dest_db;DB_CLOSE_DELAY=-1");
 
@@ -34,7 +34,7 @@ public class CopyJDBCTest {
     }
 
     @AfterEach
-    public void tearDown() throws SQLException {
+    void tearDown() throws SQLException {
         try (Statement s = srcConn.createStatement()) {
             s.execute("DROP TABLE SRC_TABLE");
         }
@@ -46,7 +46,7 @@ public class CopyJDBCTest {
     }
 
     @Test
-    public void testCopyBasic() throws Exception {
+    void testCopyBasic() throws Exception {
         // Insert sample rows
         try (PreparedStatement ps = srcConn.prepareStatement("INSERT INTO SRC_TABLE (id, name, flag, created_at, details, data) VALUES (?, ?, ?, ?, ?, ?)")) {
             // Row 1: normal
@@ -97,7 +97,7 @@ public class CopyJDBCTest {
     }
 
     @Test
-    public void testCopyTruncate() throws Exception {
+    void testCopyTruncate() throws Exception {
         // Pre-populate destination table
         try (Statement s = destConn.createStatement()) {
             s.execute("INSERT INTO DEST_TABLE (id, name) VALUES (99, 'Old Record')");
@@ -123,7 +123,7 @@ public class CopyJDBCTest {
     }
 
     @Test
-    public void testCopyBatchSize() throws Exception {
+    void testCopyBatchSize() throws Exception {
         // Insert multiple rows into source
         try (PreparedStatement ps = srcConn.prepareStatement("INSERT INTO SRC_TABLE (id, name) VALUES (?, ?)")) {
             for (int i = 1; i <= 5; i++) {
@@ -147,7 +147,7 @@ public class CopyJDBCTest {
     }
 
     @Test
-    public void testEmptySource() throws Exception {
+    void testEmptySource() throws Exception {
         int copied = CopyJDBC.copy(srcConn, destConn, "SELECT * FROM SRC_TABLE", "DEST_TABLE");
         assertEquals(0, copied);
 
@@ -157,4 +157,5 @@ public class CopyJDBCTest {
             assertEquals(0, rs.getInt(1));
         }
     }
+
 }
