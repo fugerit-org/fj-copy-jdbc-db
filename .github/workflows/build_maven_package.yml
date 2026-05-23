@@ -25,7 +25,7 @@ jobs:
     name: Build
     runs-on: windows-latest
     steps:
-      - uses: fugerit-org/psychic-actions/maven-build-scan@dev
+      - uses: fugerit-org/psychic-actions/maven-build-scan@stable
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           sonar-token: ${{ secrets.SONAR_TOKEN }}
