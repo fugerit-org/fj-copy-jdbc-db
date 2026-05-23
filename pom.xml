@@ -13,7 +13,7 @@
 
 	<name>Tool to copy from to jdbc database.</name>
 	<description>Copy from source to destination jdbc database one or more tables.</description>
-	<version>1.0.0-SNAPSHOT</version>
+	<version>1.0.0</version>
 
 	<licenses>
 		<license>

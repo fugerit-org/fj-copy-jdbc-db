@@ -57,7 +57,7 @@ String srcQuery = "SELECT id, name, created_at, details FROM my_source_table";
 String destTable = "my_destination_table";
 
 int rowsCopied = CopyJDBC.copy(srcConn, destConn, srcQuery, destTable);
-System.out.println("Copied " + rowsCopied + " rows successfully!");
+log.info("Copied {} rows successfully!", rowsCopied);
 ```
 
 ### Advanced Copy with Configurations
@@ -81,5 +81,47 @@ CopyConfig config = CopyConfig.builder()
     .build();
 
 int rowsCopied = CopyJDBC.copy(srcConn, destConn, srcQuery, destTable, config);
-System.out.println("Copied " + rowsCopied + " rows into the backup table!");
+log.info("Copied {} rows into the backup table!", rowsCopied);
 ```
+
+### Copy driven by Properties (CopyJDBCTool)
+
+For integration with properties files or custom configuration managers, you can use the `CopyJDBCTool` utility. This allows you to define connection and copying configurations in a standard `.properties` file and execute the copy directly.
+
+#### 1. Define the Configuration File (`copy-jdbc-db.properties`)
+
+```properties
+# Source connection settings (prefixed with 'src-')
+src-db-cf-mode=DC
+src-db-mode-dc-drv=org.h2.Driver
+src-db-mode-dc-url=jdbc:h2:mem:src_db_params;DB_CLOSE_DELAY=-1;INIT=RUNSCRIPT FROM './src/test/resources/config/init-src.sql';
+src-db-mode-dc-usr=TESTDB
+src-db-mode-dc-pwd=TESTDB
+
+# Destination connection settings (prefixed with 'dest-')
+dest-db-cf-mode=DC
+dest-db-mode-dc-drv=org.h2.Driver
+dest-db-mode-dc-url=jdbc:h2:mem:dest_db_params;DB_CLOSE_DELAY=-1;INIT=RUNSCRIPT FROM './src/test/resources/config/init-dest.sql';
+dest-db-mode-dc-usr=TESTDB
+dest-db-mode-dc-pwd=TESTDB
+
+# Transfer settings
+src-query=SELECT * FROM TEST_TABLE
+dest-table=TEST_TABLE
+```
+
+#### 2. Load Properties and Execute in Java
+
+```java
+import java.util.Properties;
+import org.fugerit.java.core.util.PropsIO;
+import org.fugerit.java.db.copy.CopyJDBCTool;
+
+Properties params = PropsIO.loadFromClassLoaderSafe("config/copy-jdbc-db.properties");
+
+long rowsCopied = CopyJDBCTool.copyFromParams(params);
+log.info("Transferred {} rows successfully!", rowsCopied);
+```
+
+
+
